@@ -161,22 +161,23 @@ export default {
       .then((response) => response.json())
       .then((data) => data.items);
 
-    this.your_artists = yourShortTermArtists.concat(yourMediumTermArtists)
-      .concat(yourLongTermArtists);
+    if (typeof yourShortTermArtists !== 'undefined' && typeof theirShortTermArtists !== 'undefined') {
+      this.your_artists = yourShortTermArtists.concat(yourMediumTermArtists)
+        .concat(yourLongTermArtists);
 
-    this.their_artists = theirShortTermArtists.concat(theirMediumTermArtists)
-      .concat(theirLongTermArtists);
+      this.their_artists = theirShortTermArtists.concat(theirMediumTermArtists)
+        .concat(theirLongTermArtists);
 
-    this.your_tracks = yourShortTermTracks.concat(yourMediumTermTracks).concat(yourLongTermTracks);
+      this.your_tracks = yourShortTermTracks
+        .concat(yourMediumTermTracks).concat(yourLongTermTracks);
 
-    this.their_tracks = theirShortTermTracks.concat(theirMediumTermTracks)
-      .concat(theirLongTermTracks);
-
-    if (typeof this.your_artists === 'undefined' || typeof this.their_artists === 'undefined') {
+      this.their_tracks = theirShortTermTracks.concat(theirMediumTermTracks)
+        .concat(theirLongTermTracks);
+    } else {
       let errorMessage = 'A code was bad';
-      if (typeof this.your_artists === 'undefined') {
+      if (typeof yourShortTermArtists === 'undefined') {
         errorMessage = 'Your code was bad';
-      } else if (typeof this.their_artists === 'undefined') {
+      } else if (typeof theirShortTermArtists === 'undefined') {
         errorMessage = 'Their code was bad';
       }
       this.your_artists = [{
