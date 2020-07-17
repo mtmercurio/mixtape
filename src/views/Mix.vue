@@ -62,7 +62,7 @@ export default {
   async mounted() {
     this.isArtistsLoading = true;
     this.isTracksLoading = true;
-    this.your_artists = await fetch('https://api.spotify.com/v1/me/top/artists?limit=50&', {
+    const yourShortTermArtists = await fetch('https://api.spotify.com/v1/me/top/artists?limit=50&time_range=short_term', {
       method: 'get',
       headers: new Headers({
         Authorization: `Bearer ${this.$store.state.your_access_code}`,
@@ -70,7 +70,7 @@ export default {
     })
       .then((response) => response.json())
       .then((data) => data.items);
-    this.their_artists = await fetch('https://api.spotify.com/v1/me/top/artists?limit=50', {
+    const theirShortTermArtists = await fetch('https://api.spotify.com/v1/me/top/artists?limit=50&time_range=short_term', {
       method: 'get',
       headers: new Headers({
         Authorization: `Bearer ${this.$store.state.their_access_code}`,
@@ -78,7 +78,7 @@ export default {
     })
       .then((response) => response.json())
       .then((data) => data.items);
-    this.your_tracks = await fetch('https://api.spotify.com/v1/me/top/tracks?limit=50', {
+    const yourShortTermTracks = await fetch('https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=short_term', {
       method: 'get',
       headers: new Headers({
         Authorization: `Bearer ${this.$store.state.your_access_code}`,
@@ -86,7 +86,7 @@ export default {
     })
       .then((response) => response.json())
       .then((data) => data.items);
-    this.their_tracks = await fetch('https://api.spotify.com/v1/me/top/tracks?limit=50', {
+    const theirShortTermTracks = await fetch('https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=short_term', {
       method: 'get',
       headers: new Headers({
         Authorization: `Bearer ${this.$store.state.their_access_code}`,
@@ -94,6 +94,83 @@ export default {
     })
       .then((response) => response.json())
       .then((data) => data.items);
+
+    const yourMediumTermArtists = await fetch('https://api.spotify.com/v1/me/top/artists?limit=50&time_range=medium_term', {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${this.$store.state.your_access_code}`,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data.items);
+    const theirMediumTermArtists = await fetch('https://api.spotify.com/v1/me/top/artists?limit=50&time_range=medium_term', {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${this.$store.state.their_access_code}`,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data.items);
+    const yourMediumTermTracks = await fetch('https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=medium_term', {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${this.$store.state.your_access_code}`,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data.items);
+    const theirMediumTermTracks = await fetch('https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=medium_term', {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${this.$store.state.their_access_code}`,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data.items);
+
+    const yourLongTermArtists = await fetch('https://api.spotify.com/v1/me/top/artists?limit=50&time_range=long_term', {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${this.$store.state.your_access_code}`,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data.items);
+    const theirLongTermArtists = await fetch('https://api.spotify.com/v1/me/top/artists?limit=50&time_range=long_term', {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${this.$store.state.their_access_code}`,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data.items);
+    const yourLongTermTracks = await fetch('https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=long_term', {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${this.$store.state.your_access_code}`,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data.items);
+    const theirLongTermTracks = await fetch('https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=long_term', {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${this.$store.state.their_access_code}`,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data.items);
+
+    this.your_artists = yourShortTermArtists.concat(yourMediumTermArtists)
+      .concat(yourLongTermArtists);
+
+    this.their_artists = theirShortTermArtists.concat(theirMediumTermArtists)
+      .concat(theirLongTermArtists);
+
+    this.your_tracks = yourShortTermTracks.concat(yourMediumTermTracks).concat(yourLongTermTracks);
+
+    this.their_tracks = theirShortTermTracks.concat(theirMediumTermTracks)
+      .concat(theirLongTermTracks);
 
     if (typeof this.your_artists === 'undefined' || typeof this.their_artists === 'undefined') {
       let errorMessage = 'A code was bad';
@@ -133,19 +210,31 @@ export default {
     this.your_artists.forEach((yourArtist) => {
       this.their_artists.forEach((theirArtist) => {
         if (yourArtist.id === theirArtist.id) {
-          this.our_artists.push(yourArtist);
-          return true;
+          let isInOurArtists = false;
+          this.our_artists.forEach((ourArtists) => {
+            if (yourArtist.id === ourArtists.id) {
+              isInOurArtists = true;
+            }
+          });
+          if (!isInOurArtists) {
+            this.our_artists.push(yourArtist);
+          }
         }
-        return true;
       });
     });
     this.your_tracks.forEach((yourTracks) => {
       this.their_tracks.forEach((theirTracks) => {
         if (yourTracks.id === theirTracks.id) {
-          this.our_tracks.push(yourTracks);
-          return true;
+          let isInOurTracks = false;
+          this.our_tracks.forEach((ourTrack) => {
+            if (yourTracks.id === ourTrack.id) {
+              isInOurTracks = true;
+            }
+          });
+          if (!isInOurTracks) {
+            this.our_tracks.push(yourTracks);
+          }
         }
-        return true;
       });
     });
     if (this.our_artists.length === 0) {
