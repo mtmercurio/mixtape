@@ -22,9 +22,6 @@
           <p>
             Each person needs to click the above button on their own devices.
           </p>
-          <p>
-            <strong>Note:</strong> we do not save any information.
-          </p>
         </div>
       </div>
     </div>
